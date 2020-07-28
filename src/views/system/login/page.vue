@@ -44,15 +44,14 @@
                   </el-input>
                 </el-form-item>
                 <el-form-item prop="code" v-show="activeName == '验证码登陆'">
-                  <el-row :gutter="10">
-                    <el-col :span="10">
+                  <el-row :gutter="20">
+                    <el-col :span="17">
                       <el-input type="code" v-model="formLogin.code" placeholder="请输入验证码">
                         <i slot="prepend" class="fa fa-keyboard-o"></i>
                       </el-input>
                     </el-col>
                     <el-col :span="3">
-                      <el-button>获取验证码</el-button>
-                      <div>{{codeSpan}}</div>
+                      <el-button @click="getCode" :disabled="codeSpan!=='获取验证码'">{{codeSpan}}</el-button>
                     </el-col>
                   </el-row>
 
@@ -113,7 +112,7 @@ export default {
   mixins: [localeMixin],
   data() {
     return {
-      codeSpan: "60s",
+      codeSpan: "获取验证码",
       codeClick: true,
       activeName: "密码登陆",
       timeInterval: null,
@@ -180,7 +179,17 @@ export default {
   },
   methods: {
     ...mapActions("d2admin/account", ["login"]),
-    getCode() {},
+    getCode() {
+      let num = 60
+      let a = setInterval(()=> {
+        this.codeSpan = +num + "s后重置"
+        num--;
+        if(!num) {
+          this.codeSpan = "获取验证码",
+          clearInterval(a)
+        }
+      },1000)
+    },
     handleClick(tab, event) {
       // this.activeName = tab.label
       window.console.log(this.activeName);
@@ -225,6 +234,9 @@ export default {
 </script>
 
 <style lang="scss">
+.el-button--primary{
+  width: 100px;
+}
 .page-login {
   @extend %unable-select;
   $backgroundColor: #f0f2f5;
@@ -271,7 +283,7 @@ export default {
   }
   // 登录表单
   .page-login--form {
-    width: 280px;
+    width: 410px;
     // 卡片
     .el-card {
       margin-bottom: 15px;
