@@ -50,7 +50,7 @@
                         <i slot="prepend" class="fa fa-keyboard-o"></i>
                       </el-input>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :span="2">
                       <el-button @click="getCode" :disabled="codeSpan!=='获取验证码'">{{codeSpan}}</el-button>
                     </el-col>
                   </el-row>
@@ -108,13 +108,16 @@
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
 import localeMixin from "@/locales/mixin.js";
+import { request } from "../../../api/service";
+import qs from "qs";
+import cookies from "@/libs/util.cookies";
 export default {
   mixins: [localeMixin],
   data() {
     return {
       codeSpan: "获取验证码",
       codeClick: true,
-      activeName: "密码登陆",
+      activeName: "验证码登陆",
       timeInterval: null,
       time: dayjs().format("HH:mm:ss"),
       // 快速选择用户
@@ -180,15 +183,14 @@ export default {
   methods: {
     ...mapActions("d2admin/account", ["login"]),
     getCode() {
-      let num = 60
-      let a = setInterval(()=> {
-        this.codeSpan = +num + "s后重置"
+      let num = 60;
+      let a = setInterval(() => {
+        this.codeSpan = +num + "s后重置";
         num--;
-        if(!num) {
-          this.codeSpan = "获取验证码",
-          clearInterval(a)
+        if (!num) {
+          (this.codeSpan = "获取验证码"), clearInterval(a);
         }
-      },1000)
+      }, 1000);
     },
     handleClick(tab, event) {
       // this.activeName = tab.label
@@ -216,13 +218,30 @@ export default {
           // 登录
           // 注意 这里的演示没有传验证码
           // 具体需要传递的数据请自行修改代码
-          this.login({
-            username: this.formLogin.username,
-            password: this.formLogin.password,
-          }).then(() => {
-            // 重定向对象不存在则返回顶层路径
+
+          request({
+            url: "/login/queryPassword",
+            method: "get",
+            params: {
+              name: this.formLogin.username,
+              password: this.formLogin.password,
+            },
+          }).then((res) => {
+            console.log(res);
+            cookies.set("token", res.dataModel.token);
+            this.$store.dispatch("d2admin/user/set", {
+              name: res.dataModel.user.name,
+            });
             this.$router.replace(this.$route.query.redirect || "/");
           });
+
+          // this.login({
+          //   username: this.formLogin.username,
+          //   password: this.formLogin.password,
+          // }).then(() => {
+          //   // 重定向对象不存在则返回顶层路径
+          //   this.$router.replace(this.$route.query.redirect || "/");
+          // });
         } else {
           // 登录表单校验失败
           this.$message.error("表单校验失败，请检查");
@@ -234,7 +253,7 @@ export default {
 </script>
 
 <style lang="scss">
-.el-button--primary{
+.el-button--primary {
   width: 100px;
 }
 .page-login {

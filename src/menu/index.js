@@ -25,7 +25,8 @@ export const menuHeader = supplementPath([
       { path: '/page2', title: '页面 2' },
       { path: '/page3', title: '页面 3' }
     ]
-  }
+  },
+  { path: '/Department', title: '部门管理', icon: 'home'}
 ])
 
 export const menuAside = supplementPath([
@@ -38,5 +39,5 @@ export const menuAside = supplementPath([
       { path: '/page2', title: '页面 2' },
       { path: '/page3', title: '页面 3' }
     ]
-  }
+  },
 ])

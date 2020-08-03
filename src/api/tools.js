@@ -23,10 +23,10 @@ export function parse (jsonString = '{}', defaultValue = {}) {
  * @param {String} msg 状态信息
  * @param {Number} code 状态码
  */
-export function response (data = {}, msg = '', code = 0) {
+export function response (data = {}, msg = '', messageModel= {code: 0}) {
   return [
     200,
-    { code, msg, data }
+    { messageModel, msg, data }
   ]
 }
 
@@ -35,8 +35,8 @@ export function response (data = {}, msg = '', code = 0) {
  * @param {Any} data 返回值
  * @param {String} msg 状态信息
  */
-export function responseSuccess (data = {}, msg = '成功') {
-  return response(data, msg)
+export function responseSuccess (data = {}, msg = '成功', messageModel = { code:0 }) {
+  return response(data, msg, messageModel)
 }
 
 /**
@@ -45,8 +45,8 @@ export function responseSuccess (data = {}, msg = '成功') {
  * @param {String} msg 状态信息
  * @param {Number} code 状态码
  */
-export function responseError (data = {}, msg = '请求失败', code = 500) {
-  return response(data, msg, code)
+export function responseError (data = {}, msg = '请求失败', messageModel = { code: 500 }) {
+  return response(data, msg, messageModel)
 }
 
 /**

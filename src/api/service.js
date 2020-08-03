@@ -10,6 +10,8 @@ import { errorLog, errorCreate } from './tools'
 function createService () {
   // 创建一个 axios 实例
   const service = axios.create()
+  service.baseURL = process.env.VUE_APP_API
+  console.log(process.env.VUE_APP_API)
   // 请求拦截
   service.interceptors.request.use(
     config => config,
@@ -25,7 +27,8 @@ function createService () {
       // dataAxios 是 axios 返回数据中的 data
       const dataAxios = response.data
       // 这个状态码是和后端约定的
-      const { code } = dataAxios
+      const { code } = dataAxios.messageModel
+      // console.log(code)
       // 根据 code 进行判断
       if (code === undefined) {
         // 如果没有 code 代表这不是项目后端开发的接口 比如可能是 D2Admin 请求最新版本
@@ -35,14 +38,14 @@ function createService () {
         switch (code) {
           case 0:
             // [ 示例 ] code === 0 代表没有错误
-            return dataAxios.data
-          case 'xxx':
-            // [ 示例 ] 其它和后台约定的 code
-            errorCreate(`[ code: xxx ] ${dataAxios.msg}: ${response.config.url}`)
-            break
+            return dataAxios
+          // case 'xxx':
+          //   // [ 示例 ] 其它和后台约定的 code
+          //   errorCreate(`[ code: xxx ] ${dataAxios.msg}: ${response.config.url}`)
+          //   break
           default:
             // 不是正确的 code
-            errorCreate(`${dataAxios.msg}: ${response.config.url}`)
+            errorCreate(`${dataAxios.messageModel.messageText}: ${response.config.url}`)
             break
         }
       }
