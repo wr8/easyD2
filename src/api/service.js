@@ -85,7 +85,7 @@ function createRequestFunction (service) {
         Authorization: token,
         'Content-Type': get(config, 'headers.Content-Type', 'application/json')
       },
-      timeout: 5000,
+      // timeout: 5000,   //超时
       baseURL: process.env.VUE_APP_API,
       data: {}
     }

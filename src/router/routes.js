@@ -58,6 +58,15 @@ const frameIn = [
         },
         component: _import('Department/DepartmentManagement')
       },
+      {
+        path: 'DepartmentAdd',
+        name: 'DepartmentAdd',
+        meta: {
+          title: '人员新增',
+          auth: true
+        },
+        component: _import('Department/DepartmentAdd')
+      },
       // 系统 前端日志
       {
         path: 'log',
