@@ -25,12 +25,19 @@
           </el-form-item>
           <el-form-item label="部门">
             <el-cascader
-            :show-all-levels="false"
+              ref="tree"
+              :show-all-levels="false"
               v-model="form.deaprtmentArray"
               :options="options"
               @focus="changdeaprtment"
-              :props="{ expandTrigger: 'click' ,children: 'departmentList',
-        label: 'name',value:'id',checkStrictly: true,disabled:'disabled'}"
+              node-key="id"
+              :props="{ 
+              children: 'departmentList',
+              label: 'name',
+              value: 'id',
+              checkStrictly: true,
+              disabled:'disabled'
+              }"
             ></el-cascader>
           </el-form-item>
           <el-form-item label="就职状态*">
@@ -166,7 +173,7 @@
 import { request } from "../../../api/service";
 
 import { companyPositionLever, setupDeepTree } from "../myfun";
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "DepartmentAdd",
@@ -503,31 +510,45 @@ export default {
       optionsModel: [],
     };
   },
-  created() {
-    this.getDepartmentList();
+  async created() {
+    await this.getDepartmentList();
+    this.getUserData();
   },
   computed: {
-    ...mapState('d2admin/page',[
-      'opened',
-      'current'
-    ])
+    ...mapState("d2admin/page", ["opened", "current"]),
   },
   methods: {
-    ...mapActions('d2admin/page',[
-      'close'
-    ]),
-    changdeaprtment(){
-      if(!this.form.companyPosition) 
-      this.$message.warning("请先选择岗位")
-      return false
+    ...mapActions("d2admin/page", ["close"]),
+    getUserData() {
+      request({
+        url: "user/getUserById?",
+        params: {
+          userId: this.$route.params.id,
+        },
+      }).then((res) => {
+        console.log(res.dataModel);
+        this.form = res.dataModel.user;
+        this.changeCompany();
+        this.form.deaprtmentArray = [];
+        for (let key in res.dataModel.positionList) {
+          this.form.deaprtmentArray.push(
+            res.dataModel.positionList[key].departmentId
+          );
+        }
+         
+      });
+    },
+    changdeaprtment() {
+      if (!this.form.companyPosition) this.$message.warning("请先选择岗位");
+      return false;
     },
     //修改连级选择器节点树属性
     changeCompany() {
-      this.deaprtmentArray = []
+      this.deaprtmentArray = [];
       let delDeep = companyPositionLever(this.form.companyPosition);
-      this.options = JSON.parse(JSON.stringify(this.optionsModel))
+      this.options = JSON.parse(JSON.stringify(this.optionsModel));
       // console.log(delDeep)
-      setupDeepTree(this.options[0],delDeep)
+      setupDeepTree(this.options[0], delDeep);
     },
     getDepartmentList() {
       request({
@@ -538,7 +559,6 @@ export default {
       });
     },
     submit() {
-    
       let user = new FormData();
       for (let key in this.form) {
         if (this.form[key] === null) continue;
@@ -551,10 +571,10 @@ export default {
         },
         method: "post",
         data: user,
-      }).then(()=> {
-        this.$message.success("新增成功")
-          let tagName = this.current
-    this.close({tagName});
+      }).then(() => {
+        this.$message.success("新增成功");
+        let tagName = this.current;
+        this.close({ tagName });
       });
     },
   },

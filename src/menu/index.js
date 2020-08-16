@@ -17,27 +17,34 @@ function supplementPath (menu) {
 
 export const menuHeader = supplementPath([
   { path: '/index', title: '首页', icon: 'home' },
-  {
-    title: '页面',
-    icon: 'folder-o',
-    children: [
-      { path: '/page1', title: '页面 1' },
-      { path: '/page2', title: '页面 2' },
-      { path: '/page3', title: '页面 3' }
-    ]
-  },
   { path: '/Department', title: '部门管理', icon: 'home'}
 ])
 
 export const menuAside = supplementPath([
   { path: '/index', title: '首页', icon: 'home' },
   {
-    title: '页面',
+    title: '客户管理',
     icon: 'folder-o',
     children: [
-      { path: '/page1', title: '页面 1' },
-      { path: '/page2', title: '页面 2' },
-      { path: '/page3', title: '页面 3' }
+      { path: '/myCustom', title: '我的客户' },
+      { path: '/myCustom', title: '客户列表' },
+      { path: '/myCustom', title: '再分配客户'},
+      { path: '/myCustom', title: '团队客户' },
+    ]
+  },
+  {
+    title: '财务管理',
+    icon: 'folder-o',
+    children: [
+      { path: '/myCustom', title: '在审件管理' },
+    ]
+  },
+  {
+    title: '运营管理',
+    icon: 'folder-o',
+    children: [
+      { path: '/myCustom', title: '来源管理' },
+      { path: '/myCustom', title: '充值消耗' },
     ]
   },
 ])

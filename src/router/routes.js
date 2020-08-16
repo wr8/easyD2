@@ -67,6 +67,24 @@ const frameIn = [
         },
         component: _import('Department/DepartmentAdd')
       },
+      {
+        path: 'myCustom',
+        name: 'myCustom',
+        meta: {
+          title: '我的客户',
+          auth: true
+        },
+        component: _import('customer/mycustom')
+      },
+      {
+        path: 'DepartmentEdit/:id',
+        name: 'DepartmentEdit',
+        meta: {
+          title: '人员编辑',
+          auth: true
+        },
+        component: _import('Department/DepartmentEdit')
+      },
       // 系统 前端日志
       {
         path: 'log',

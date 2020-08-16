@@ -229,9 +229,10 @@ export default {
           }).then((res) => {
             console.log(res);
             cookies.set("token", res.dataModel.token);
+            cookies.set("uuid", res.dataModel.user.id);
             this.$store.dispatch("d2admin/user/set", {
               name: res.dataModel.user.name,
-            });
+            },{root: true});
             this.$router.replace(this.$route.query.redirect || "/");
           });
 
