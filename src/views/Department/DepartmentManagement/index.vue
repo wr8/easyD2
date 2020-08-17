@@ -34,12 +34,17 @@
                 </el-form-item>
                 <br />
                 <el-form-item label="批量设置">
-                 <el-button type="primary" @click="batchFun('login',1)">允许登陆</el-button>
-                 <el-button type="primary" @click="batchFun('login',0)">禁止登陆</el-button>
-                 <el-button type="primary" @click="batchFun('isNeedData',1)">打开数据</el-button>
-                 <el-button type="primary" @click="batchFun('isNeedData',0)">关闭数据</el-button>
-                 <el-input v-model="batch.distributionCount" class="aa" placeholder="设置接收上线" style="display: inline-block;width:250px;margin-left:20px"></el-input>
-                 <el-button type="primary" @click="batchFun('distributionCount')">接收上限</el-button>
+                  <el-button type="primary" @click="batchFun('login',1)">允许登陆</el-button>
+                  <el-button type="primary" @click="batchFun('login',0)">禁止登陆</el-button>
+                  <el-button type="primary" @click="batchFun('isNeedData',1)">打开数据</el-button>
+                  <el-button type="primary" @click="batchFun('isNeedData',0)">关闭数据</el-button>
+                  <el-input
+                    v-model="batch.distributionCount"
+                    class="aa"
+                    placeholder="设置接收上线"
+                    style="display: inline-block;width:250px;margin-left:20px"
+                  ></el-input>
+                  <el-button type="primary" @click="batchFun('distributionCount')">接收上限</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -112,7 +117,7 @@
 <script>
 import departmentTree from "@/components/department/department-tree";
 import { request } from "../../../api/service";
-import log from '@/libs/util.log';
+import log from "@/libs/util.log";
 
 export default {
   name: "Department",
@@ -125,7 +130,7 @@ export default {
         textAlign: "center",
       },
       batch: {
-        distributionCount:"",
+        distributionCount: "",
         userIdArray: [],
       },
       pageConfig: {
@@ -135,7 +140,7 @@ export default {
         searchValue: "",
         total: 0, //请求到的数据总条数
       },
-      tableData: []
+      tableData: [],
     };
   },
   created() {
@@ -148,12 +153,12 @@ export default {
     },
     //表格多选框
     handleSelectionChange(val) {
-      let arr = []
-      val.map(v => {
-        arr.push(v.id)
+      let arr = [];
+      val.map((v) => {
+        arr.push(v.id);
       });
       this.batch.userIdArray = arr;
-      console.log(this.batch.userIdArray)
+      console.log(this.batch.userIdArray);
     },
     //分页方法
     handleSizeChange(val) {
@@ -177,7 +182,7 @@ export default {
       });
     },
     //批量方法
-    batchFun(type,onOff) {
+    batchFun(type, onOff) {
       // request({
       //   url: "user/updateLoginAndData",
       //   methods: "post",
@@ -187,7 +192,7 @@ export default {
       //     // distributionCount: this.batch.distributionCount,
       //     // userIdArray:  JSON.stringify(this.batch.userIdArray),
       //     onOff,
-      //     type  
+      //     type
       //   }
       // })
       request({
@@ -196,14 +201,14 @@ export default {
           //展开数组出错不知道什么问题
           // ...this.bach
           distributionCount: this.batch.distributionCount,
-          userIdArray:  this.batch.userIdArray.toString(),
+          userIdArray: this.batch.userIdArray.toString(),
           onOff,
-          type  
-        }
-      }).then( res => {
-        this.getUserList()
-      })
-    }
+          type,
+        },
+      }).then((res) => {
+        this.getUserList();
+      });
+    },
   },
   filters: {
     departmentNames(val) {
@@ -219,21 +224,11 @@ export default {
 <style scoped>
 .el-form-item--default {
   margin-left: 30px;
-  
 }
-/* /deep/.el-input--mini .el-input__inner {
-  width: 100px;
-}
-/deep/.aa input.el-input__inner {
-  width: 220px;
-}
-/deep/input.el-input__inner {
-  width: 40px;
-} */
 .el-pagination__sizes input.el-input__inner {
-      width: 100%;
-  }
-  .is-in-pagination input.el-input__inner {
-    width: 100%;
-  }
+  width: 100%;
+}
+.is-in-pagination input.el-input__inner {
+  width: 100%;
+}
 </style>
