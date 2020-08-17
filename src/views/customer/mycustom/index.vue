@@ -54,12 +54,12 @@
         <el-form-item label>
           <el-button type="primary" @click="getUserList">查询</el-button>
           <el-button type="primary" @click="onSubmit">添加客户</el-button>
-          <el-button type="primary" @click="onSubmit">添加客户</el-button>
-          <el-button type="primary" @click="onSubmit">添加客户</el-button>
+          <el-button type="primary" @click="onSubmit">加入公共池</el-button>
+          <el-button type="primary" @click="onSubmit">导入数据</el-button>
         </el-form-item>
       </el-form>
     </template>
-    <!-- <el-table
+    <el-table
       @selection-change="changeCus"
       :data="tableData"
       style="width: 100%"
@@ -124,10 +124,10 @@
       <el-table-column label="时间" width="150" align="center">
         <template slot-scope="scope">
           <p class="ell">申请：{{ scope.row.distributionTime | formatTime }}</p>
-          <p class="ell">回访：{{ scope.row.returnVisitTime | formatTime }}</p>
+          <!-- <p class="ell">回访：{{ scope.row.returnVisitTime | formatTime }}</p> -->
         </template>
       </el-table-column>
-    </el-table> -->
+    </el-table>
     <!-- 分页 -->
     <el-pagination
       style="margin-top:10px;"
@@ -145,6 +145,7 @@
 
 <script>
 import { request } from "@/api/service";
+import en from "faker/lib/locales/en";
 export default {
   name: "mycustom",
   data() {
@@ -161,6 +162,7 @@ export default {
         timeType: null,
         total: 0,
       },
+      tableData: [],
       pickerOptions: {
         shortcuts: [
           {
@@ -191,20 +193,39 @@ export default {
             },
           },
           {
-            text: "最近一个月",
+            text: "本月",
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              //当月一号时间戳
+              start.setDate(1);
+              start.setHours(0);
+              start.setSeconds(0);
+              start.setMinutes(0);
+              // start.setTime(start.getTime());
               picker.$emit("pick", [start, end]);
             },
           },
           {
-            text: "最近三个月",
+            text: "上月",
             onClick(picker) {
+              // 上月一号时间戳
+              const myStart = new Date();
+              let year = myStart.getFullYear();
+              let month = myStart.getMonth();
+              if (month === 0) {
+                month = 12;
+                year = year - 1;
+              } else if (month < 10) {
+                month = "0" + month;
+              }
+              const start = new Date(`${year}-${month}-01`); //上月一号上午8:00,后台处理过,实在不行setHours(0)
               const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              end.setDate(1);
+              end.setHours(0);
+              end.setSeconds(0);
+              end.setMinutes(0)
+              end.setTime(end.getTime() - 3600 * 1000 * 8+ 1);
               picker.$emit("pick", [start, end]);
             },
           },
@@ -232,12 +253,15 @@ export default {
         url: "/customer/getMyCustomerList",
         params: {
           ...this.form,
-          endTime: this.time[0],
-          beginTime: this.time[1],
+          beginTime: this.time[0],
+          endTime: this.time[1],
         },
+      }).then( res => {
+        this.tableData = res.dataModel.list
+        this.form.total = res.dataModel.total
       });
     },
-     handleSizeChange(val) {
+    handleSizeChange(val) {
       this.pageConfig.pageSize = val;
       this.getUserList();
     },
