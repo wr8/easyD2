@@ -77,6 +77,15 @@ const frameIn = [
         component: _import('customer/mycustom')
       },
       {
+        path: 'customAdd',
+        name: 'customAdd',
+        meta: {
+          title: '新增客户',
+          auth: true
+        },
+        component: _import('customer/mycustom/customAdd')
+      },
+      {
         path: 'DepartmentEdit/:id',
         name: 'DepartmentEdit',
         meta: {

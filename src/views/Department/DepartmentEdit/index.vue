@@ -27,10 +27,10 @@
             <el-cascader
               ref="tree"
               :show-all-levels="false"
+              current-node-key="1002"
               v-model="form.deaprtmentArray"
               :options="options"
               @focus="changdeaprtment"
-              node-key="id"
               :props="{ 
               children: 'departmentList',
               label: 'name',
@@ -176,7 +176,7 @@ import { companyPositionLever, setupDeepTree } from "../myfun";
 import { mapState, mapActions } from "vuex";
 
 export default {
-  name: "DepartmentAdd",
+  name: "DepartmentEdit",
   data() {
     return {
       form: {
@@ -529,13 +529,10 @@ export default {
         console.log(res.dataModel);
         this.form = res.dataModel.user;
         this.changeCompany();
-        this.form.deaprtmentArray = [];
-        for (let key in res.dataModel.positionList) {
-          this.form.deaprtmentArray.push(
-            res.dataModel.positionList[key].departmentId
-          );
-        }
-         
+        this.form.deaprtmentArray = res.dataModel.departmentId;
+        
+        console.log(this.form.deaprtmentArray);
+        console.log(this.options);
       });
     },
     changdeaprtment() {
@@ -578,6 +575,7 @@ export default {
       });
     },
   },
+  mounted() {},
 };
 </script>
 

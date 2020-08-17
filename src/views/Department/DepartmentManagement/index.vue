@@ -221,7 +221,7 @@ export default {
   margin-left: 30px;
   
 }
-/deep/.el-input--mini .el-input__inner {
+/* /deep/.el-input--mini .el-input__inner {
   width: 100px;
 }
 /deep/.aa input.el-input__inner {
@@ -229,5 +229,11 @@ export default {
 }
 /deep/input.el-input__inner {
   width: 40px;
-}
+} */
+.el-pagination__sizes input.el-input__inner {
+      width: 100%;
+  }
+  .is-in-pagination input.el-input__inner {
+    width: 100%;
+  }
 </style>

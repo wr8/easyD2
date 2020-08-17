@@ -52,10 +52,14 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label>
-          <el-button type="primary" @click="getUserList">查询</el-button>
-          <el-button type="primary" @click="onSubmit">添加客户</el-button>
-          <el-button type="primary" @click="onSubmit">加入公共池</el-button>
-          <el-button type="primary" @click="onSubmit">导入数据</el-button>
+          <el-button type="primary" :disabled="disTBN" @click="getUserList">查询</el-button>
+          <el-button
+            type="primary"
+            :disabled="disTBN"
+            @click="$router.push({ path: '/customAdd' })"
+          >添加客户</el-button>
+          <el-button type="primary" :disabled="disTBN" @click="addGGC">加入公共池</el-button>
+          <el-button type="primary" :disabled="disTBN" @click="onSubmit">导入数据</el-button>
         </el-form-item>
       </el-form>
     </template>
@@ -116,12 +120,12 @@
           </p>
         </template>
       </el-table-column>
-      <el-table-column prop="remarks" label="资质" width="200" align="center">
+      <el-table-column prop="remarks" label="客户情况" width="200" align="center">
         <template slot-scope="scope">
           <apan>{{ scope.row.remarks | remarksPanKong}}</apan>
         </template>
       </el-table-column>
-      <el-table-column label="时间" width="150" align="center">
+      <el-table-column label="c时间" width="150" align="center">
         <template slot-scope="scope">
           <p class="ell">申请：{{ scope.row.distributionTime | formatTime }}</p>
           <!-- <p class="ell">回访：{{ scope.row.returnVisitTime | formatTime }}</p> -->
@@ -150,6 +154,7 @@ export default {
   name: "mycustom",
   data() {
     return {
+      disTBN: false,
       //搜索条件
       time: [],
       form: {
@@ -162,6 +167,7 @@ export default {
         timeType: null,
         total: 0,
       },
+      customerId: [],
       tableData: [],
       pickerOptions: {
         shortcuts: [
@@ -224,8 +230,8 @@ export default {
               end.setDate(1);
               end.setHours(0);
               end.setSeconds(0);
-              end.setMinutes(0)
-              end.setTime(end.getTime() - 3600 * 1000 * 8+ 1);
+              end.setMinutes(0);
+              end.setTime(end.getTime() - 3600 * 1000 * 8 + 1);
               picker.$emit("pick", [start, end]);
             },
           },
@@ -248,7 +254,16 @@ export default {
     };
   },
   methods: {
+    //按钮禁用
+    disButton() {
+      this.disTBN = true;
+      setTimeout(() => {
+        this.disTBN = false;
+      }, 1000);
+    },
+    //获取客户列表
     getUserList() {
+      this.disButton();
       request({
         url: "/customer/getMyCustomerList",
         params: {
@@ -256,18 +271,44 @@ export default {
           beginTime: this.time[0],
           endTime: this.time[1],
         },
-      }).then( res => {
-        this.tableData = res.dataModel.list
-        this.form.total = res.dataModel.total
+      }).then((res) => {
+        this.tableData = res.dataModel.list;
+        this.form.total = res.dataModel.total;
       });
     },
+    //页面尺寸修改
     handleSizeChange(val) {
       this.pageConfig.pageSize = val;
       this.getUserList();
     },
+    //改变页码
     handleCurrentChange(val) {
       this.pageConfig.pageNo = val;
       this.getUserList();
+    },
+    //多选客户修改
+    changeCus(val) {
+      this.customerId = [];
+      // console.log(val);// 返回的是选中的列的数组集合
+      for (let i = 0; i < val.length; i++) {
+        this.customerId.push(val[i].id);
+      }
+    },
+    addGGC() {
+      if (this.customerId.length == 0) {
+        this.$message.error("请勾选添加勾选人名单");
+        return false;
+      }
+      
+      console.log(this.customerId)
+      this.disButton();
+      request({
+        url: "customer/addToPool",
+        // methods: "post",
+        data: {
+          customerId: this.customerId,
+        },
+      }).then((res) => this.getUserList());
     },
   },
   created() {
@@ -275,3 +316,11 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.el-pagination__sizes input.el-input__inner {
+      width: 100%;
+  }
+  .is-in-pagination input.el-input__inner {
+    width: 100%;
+  }
+</style>
